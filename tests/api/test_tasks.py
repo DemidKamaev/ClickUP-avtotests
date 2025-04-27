@@ -9,7 +9,6 @@ import time
 
 @allure.feature("Тестирование  API в ClickUp")
 class TestApi:
-    # POST /api/v2/list/{list_id}/task
 
     @allure.title("Создание и удаление задачи c использованием фикстур")
     @allure.description(
@@ -36,12 +35,6 @@ class TestApi:
             )
 
         return task_id
-
-        with allure.step("Проверка удаления задачи"):
-            assert create_response.status_code == 200,
-
-
-
 
     # @pytest.fixture(scope='function')
     # def test_task(self, create_data, get_list_id):
