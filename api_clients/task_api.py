@@ -27,6 +27,12 @@ class ClickUpClient:
             "Content_Type": "application/json",
             "Authorization": api_token
         })
+        self.session_2 = requests.Session()
+        self.session_2.headers.update({
+            "Accept": "application/json",
+            "Content_Type": "application/json",
+            "Authorization": api_token
+        })
 
     @allure.step("Получение team id")
     def get_team_id(self):
@@ -79,16 +85,16 @@ class ClickUpClient:
             raise ValueError("Не удалось получить list_id из response_json") from e
 
     @allure.step("Создание task")
-    def create_task(self, list_id, task_data):
-        return self.session.post(f"{self.base_url}/api/v2/list/{list_id}/task", json=task_data)
+    def create_task(self, list_id, create_data):
+        return self.session_2.post(f"{self.base_url}/api/v2/list/{list_id}/task", json=create_data)
 
     @allure.step("Получение task")
     def get_task(self, task_id):
-        return self.session.get(f"{self.base_url}/api/v2/task/{task_id}/api/v2/task/{task_id}")
+        return self.session.get(f"{self.base_url}/api/v2/task/{task_id}")
 
     @allure.step("Обновление task")
     def update_task(self, task_id, update_data):
-        return self.session.put(f"{self.base_url}/api/v2/task/{task_id}", json=update_data)
+        return self.session_2.put(f"{self.base_url}/api/v2/task/{task_id}", json=update_data)
 
     @allure.step("Удаление task")
     def delete_task(self, task_id):
