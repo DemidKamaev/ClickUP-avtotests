@@ -24,7 +24,7 @@ class ClickUpClient:
         self.base_url = base_url
         self.session = requests.Session()
         self.session.headers.update({
-            "Content_Type": "application/json",
+            "Accept": "application/json",
             "Authorization": api_token
         })
         self.session_2 = requests.Session()
