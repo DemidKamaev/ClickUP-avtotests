@@ -1,5 +1,4 @@
 import pytest
-import requests
 import allure
 from config import BASE_URL
 from api_clients.task_api import ClickUpClient

@@ -5,5 +5,3 @@ BASE_URL = 'https://api.clickup.com'
 client = ClickUpClient(BASE_URL, CLICKUP_API_KEY)
 FOLDER_ID = ''
 WORKSPACE_ID = client.get_list_id
-
-

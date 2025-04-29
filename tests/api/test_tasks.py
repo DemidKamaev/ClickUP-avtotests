@@ -1,10 +1,7 @@
 import allure
 import pytest
 from api_clients.task_api import ClickUpClient
-import requests
-from tests.conftest import create_data, update_data, get_list_id_fixture, clickup_client
-from utils.helpers import CLICKUP_API_KEY
-import time
+from tests.conftest import create_data, update_data, clickup_client
 
 
 @allure.feature("Тестирование  API в ClickUp")
@@ -20,7 +17,6 @@ class TestApi(ClickUpClient):
             assert create_response.status_code == 200, (f"Status code: {create_response.status_code}, "
                                                         f"responce: {create_response.text}")
             task_data = create_response.json()
-            task_id = task_data['id']
 
         with allure.step("Проверка совпадения имени задачи"):
             assert task_data['name'] == create_data['name'], (
@@ -186,160 +182,3 @@ class TestApi(ClickUpClient):
 
                 data_delete = data_response.json()
                 assert "Team not authorized" in data_delete, f"Response: {data_delete.text}"
-
-    # @pytest.fixture(scope='function')
-    # def test_replace_get_on_post_task_(self, create_data):
-    #     post_responce = requests.post(f"{self.BASE_URL}/api/v2/list/{self.LIST_ID}/task",
-    #                                   json=create_data, headers=self.HEADERS_POST)
-    #     assert post_responce.status_code == 200, (f"Status code: {post_responce.status_code}, "
-    #                                               f"Responce: {post_responce.text}")
-    #     post_data = post_responce.json()
-    #     assert len(post_data['id']) > 0, "Not found new id"
-    #     task_id = post_data['id']
-    #
-    #     get_responce = requests.post(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert get_responce.status_code == 404, (f"Status code: {get_responce.status_code}, "
-    #                                              f"Responce: {get_responce.text}")
-    #     assert "<pre>Cannot POST" in get_responce.text, "Error message not found responce"
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 204, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    # @pytest.fixture(scope='function')
-    # def test_invalid_time_get_task_(self, create_data):
-    #     TIMEOUT_GET = 1
-    #
-    #     post_responce = requests.post(f"{self.BASE_URL}/api/v2/list/{self.LIST_ID}/task",
-    #                                   json=create_data, headers=self.HEADERS_POST)
-    #     assert post_responce.status_code == 200, (f"Status code: {post_responce.status_code}, "
-    #                                               f"Responce: {post_responce.text}")
-    #     post_data = post_responce.json()
-    #     assert len(post_data['id']) > 0, "Not found new id"
-    #     task_id = post_data['id']
-    #
-    #     start_time = time.time()
-    #     get_responce = requests.get(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     end_time = time.time()
-    #
-    #     responce_time = end_time - start_time
-    #
-    #     assert get_responce.status_code == 404, (f"Status code: {get_responce.status_code}, "
-    #                                              f"Responce: {get_responce.text}")
-    #     assert "<pre>Cannot POST" in get_responce.text, "Error message not found responce"
-    #
-    #     assert responce_time < TIMEOUT_GET, f"Get request crashed due to timeout: {responce_time: .2f} seconds"
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 204, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    # @pytest.fixture(scope='function')
-    # def test_negative_update_data_task(self, create_data, invalid_update_data):
-    #     post_responce = requests.post(f"{self.BASE_URL}/api/v2/list/{self.LIST_ID}/task",
-    #                                   json=create_data, headers=self.HEADERS_POST)
-    #     assert post_responce.status_code == 200, (f"Status code: {post_responce.status_code}, "
-    #                                               f"Responce: {post_responce.text}")
-    #
-    #     post_data = post_responce.json()
-    #     task_id = post_data['id']
-    #
-    #     put_responce = requests.put(f"{self.BASE_URL}/api/v2/task/{task_id}",
-    #                                 headers=self.HEADERS_POST, json=invalid_update_data)
-    #     assert put_responce.status_code == 400, (f"Status code: {put_responce.status_code}, "
-    #                                              f"Responce: {put_responce.text}")
-    #
-    #     assert 'err' in post_data, "Key 'err' not found in responce"
-    #     assert post_data['err'] == "Task name invalid", f"Value 'err': {post_data['err']}"
-    #     assert 'ECODE' in post_data, "Key 'ECODE' not found in responce"
-    #     assert post_data['ECODE'] == "INPUT_005", f"Value 'ECODE': {post_data['ECODE']}"
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 204, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    # @pytest.fixture(scope='function')
-    # def test_invalid_headers_update_task(self, create_data, invalid_update_data):
-    #     post_responce = requests.post(f"{self.BASE_URL}/api/v2/list/{self.LIST_ID}/task",
-    #                                   json=create_data, headers=self.HEADERS_POST)
-    #     assert post_responce.status_code == 200, (f"Status code: {post_responce.status_code}, "
-    #                                               f"Responce: {post_responce.text}")
-    #
-    #     post_data = post_responce.json()
-    #     task_id = post_data['id']
-    #
-    #     headers = {"Accept": "application/json",
-    #                "Content-Type": "text/html",
-    #                "Authorization": [CLICKUP_API_KEY]}
-    #
-    #     put_responce = requests.put(f"{self.BASE_URL}/api/v2/task/{task_id}",
-    #                                 headers=headers, json=invalid_update_data)
-    #     assert put_responce.status_code == 200, (f"Status code: {put_responce.status_code}, "
-    #                                              f"Responce: {put_responce.text}")
-    #
-    #     put_data = put_responce.json()
-    #     assert task_id == put_data['id'], f"Value key 'id': {put_data['id']}"
-    #     assert put_data['name'] != invalid_update_data['name'], f"Value key 'name': {put_data['name']}"
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 204, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    # @pytest.fixture(scope='function')
-    # def test_invalid_task_id_delete_task(self, create_data):
-    #     post_responce = requests.post(f"{self.BASE_URL}/api/v2/list/{self.LIST_ID}/task",
-    #                                   json=create_data, headers=self.HEADERS_POST)
-    #     assert post_responce.status_code == 200, (f"Status code: {post_responce.status_code}, "
-    #                                               f"Responce: {post_responce.text}")
-    #     post_data = post_responce.json()
-    #     task_id = post_data['id']
-    #
-    #     invalid_task_id = "86c35"
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{invalid_task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 401, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    #     get_responce = requests.get(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert get_responce.status_code == 200, (f"Status code: {get_responce.status_code}, "
-    #                                              f"Responce: {get_responce.text}")
-    #     get_data = get_responce.json()
-    #     assert get_data['id'] == task_id, f"Value for key 'id': {get_data['id']}"
-    #     assert get_data['name'] == post_data['name'], f"Value for key 'name': {get_data['name']}"
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 204, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    #     get_responce = requests.get(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert get_responce.status_code == 404, (f"Status code: {delete_responce.status_code}, "
-    #                                              f"Responce: {delete_responce.text}")
-    #
-    # @pytest.fixture(scope='function')
-    # def test_invalid_url_delete_task(self, create_data):
-    #     post_responce = requests.post(f"{self.BASE_URL}/api/v2/list/{self.LIST_ID}/task",
-    #                                   json=create_data, headers=self.HEADERS_POST)
-    #     assert post_responce.status_code == 200, (f"Status code: {post_responce.status_code}, "
-    #                                               f"Responce: {post_responce.text}")
-    #     post_data = post_responce.json()
-    #     task_id = post_data['id']
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}/team", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 404, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    #     assert "<pre>Cannot DELETE" in delete_responce.text, "Error message not found responce"
-    #
-    #     get_responce = requests.get(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert get_responce.status_code == 200, (f"Status code: {get_responce.status_code}, "
-    #                                              f"Responce: {get_responce.text}")
-    #     get_data = get_responce.json()
-    #     assert get_data['id'] == task_id, f"Value for key 'id': {get_data['id']}"
-    #     assert get_data['name'] == post_data['name'], f"Value for key 'name': {get_data['name']}"
-    #
-    #     delete_responce = requests.delete(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert delete_responce.status_code == 204, (f"Status code: {delete_responce.status_code}, "
-    #                                                 f"Responce: {delete_responce.text}")
-    #
-    #     get_responce = requests.get(f"{self.BASE_URL}/api/v2/task/{task_id}", headers=self.HEADERS_GET)
-    #     assert get_responce.status_code == 404, (f"Status code: {delete_responce.status_code}, "
-    #                                              f"Responce: {delete_responce.text}")

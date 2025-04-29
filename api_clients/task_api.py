@@ -1,6 +1,5 @@
 import allure
 import requests
-from utils.helpers import CLICKUP_API_KEY
 from tests.conftest import create_data
 
 
@@ -84,27 +83,3 @@ class ClickUpClient:
     @allure.step("Удаление task")
     def delete_task(self, task_id):
         return self.session.delete(f"{self.base_url}/api/v2/task/{task_id}")
-
-
-
-    # BASE_URL = 'https://api.clickup.com'
-    # HEADERS_POST = {"Accept": "application/json",
-    #                 "Content-Type": "application/json",
-    #                 "Authorization": [CLICKUP_API_KEY]}
-    #
-    # HEADERS_GET = {"Accept": "application/json",
-    #                "Authorization": [CLICKUP_API_KEY]}
-    #
-    # TEAM_ID = "90151065503"
-    # SPACE_ID = "90154117382"
-    # FOLDER_ID = "90156319403"
-    # LIST_ID = "901510167328"
-
-    # def __init__(self):
-    #     self._endpoint = ""
-    #
-    # def _get_full_url(self):
-    #     return f"{self.__BASE_URL}/{self._endpoint}"
-
-    # Дернуть матрешку для получения list_id
-
