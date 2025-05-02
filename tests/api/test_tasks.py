@@ -12,10 +12,10 @@ class TestApi(ClickUpClient):
         "Создание новой задачи, проверка полей, удаление и проверка удаления"
     )
     def test_create_task(self, create_task_fixture, create_data):
-        with allure.step("Create new task"):
+        with allure.step("Создание новой задачи"):
             create_response = create_task_fixture
-            assert create_response.status_code == 200, (f"Status code: {create_response.status_code}, "
-                                                        f"responce: {create_response.text}")
+            assert create_response.status_code == 200, (f"Статус код: {create_response.status_code}, "
+                                                        f"Ответ: {create_response.text}")
             task_data = create_response.json()
 
         with allure.step("Проверка совпадения имени задачи"):
@@ -89,6 +89,7 @@ class TestApi(ClickUpClient):
             data_response = response.json()
             task_id = data_response['id']
 
+        with allure.step("Проверка изменения данных в теле-ответа"):
             put_response = clickup_client.update_task(task_id, update_data)
             assert put_response.status_code == 200, (f"Status code: {response.status_code}, "
                                                      f"response: {response.text}")
@@ -116,21 +117,22 @@ class TestApi(ClickUpClient):
 
     @allure.description("Попытка получения несуществующей таски")
     def test_get_task_invalid_task_id(self, create_task_fixture, clickup_client):
-        with allure.step(f"Проверка получение такси при невалидных данных"):
+        with allure.step("Проверка получение такси при невалидных данных"):
             response = create_task_fixture
             assert response.status_code == 200, (f"Status code: {response.status_code}, "
                                                  f"response: {response.text}")
             data_response = response.json()
             task_id = data_response['id']
 
+        with allure.step("Проверям тело ответа на наличие ошибки"):
             if task_id in data_response:
                 get_response = clickup_client.get_task("86c39m3u")
                 assert get_response.status_code == 401, (f"Status code: {get_response.status_code}, "
                                                          f"response: {get_response.text}")
                 get_data = get_response.json()
-                assert 'err' in get_data, "Key 'err' not found in responce"
+                assert 'err' in get_data, "Key 'err' not found in response"
                 assert get_data['err'] == "Team not authorized", f"Value 'err': {get_data['err']}"
-                assert 'ECODE' in get_data, "Key 'ECODE' not found in responce"
+                assert 'ECODE' in get_data, "Key 'ECODE' not found in response"
                 assert get_data['ECODE'] == "OAUTH_027", f"Value 'ECODE': {get_data['ECODE']}"
 
     @allure.description("Попытка обновления с некорректным task_id")
@@ -142,10 +144,11 @@ class TestApi(ClickUpClient):
             data_response = response.json()
             task_id = data_response['id']
 
+        with allure.step("Проверка тела ответа на наличие ошибок"):
             if task_id in data_response:
                 put_response = clickup_client.update_task("86c39m3_id", update_data)
                 assert put_response.status_code == 401, (f"Status code: {put_response.status_code}, "
-                                                         f"Responce: {put_response.text}")
+                                                         f"Response: {put_response.text}")
                 assert "Oauth token not found" in put_response.text, "Нет сообщения в ответе"
 
     @allure.description("Попытка обновления с невалидными данными")
@@ -157,15 +160,16 @@ class TestApi(ClickUpClient):
             data_response = response.json()
             task_id = data_response['id']
 
+        with allure.step("Проверка наличия полей в теле-ответа"):
             if task_id in data_response:
                 put_response = clickup_client.update_task(task_id, invalid_update_data)
                 assert put_response.status_code == 200, (f"Status code: {put_response.status_code}, "
-                                                         f"Responce: {put_response.text}")
+                                                         f"Response: {put_response.text}")
                 data_put = put_response.json()
                 assert "name" in data_put, f"Response: {data_put.text}"
                 assert "description" in data_put, f"В ответе нет ключа 'description': {data_put.text}"
 
-    @allure.description("Попытка удаления несуществующим task_id")
+    @allure.description("Попытка удаления с несуществующим task_id")
     def test_delete_invalid_task_id(self, clickup_client, create_task_fixture):
         with allure.step("Использование невалидного ID"):
             response = create_task_fixture
@@ -175,10 +179,11 @@ class TestApi(ClickUpClient):
             data_response = response.json()
             task_id = data_response['id']
 
+        with allure.step("Проверка текста об ошибки в теле ответа"):
             if task_id in data_response:
                 delete_response = clickup_client.delete_task("36wniw_id")
                 assert delete_response.status_code == 401, (f"Status code: {delete_response.status_code}, "
-                                                            f"Responce: {delete_response.text}")
+                                                            f"Response: {delete_response.text}")
 
                 data_delete = data_response.json()
                 assert "Team not authorized" in data_delete, f"Response: {data_delete.text}"

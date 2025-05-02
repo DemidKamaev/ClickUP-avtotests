@@ -76,6 +76,10 @@ class ClickUpClient:
     def get_task(self, task_id):
         return self.session.get(f"{self.base_url}/api/v2/task/{task_id}")
 
+    @allure.step("Получение списка задач")
+    def get_full_tasks(self, list_id):
+        return self.session.get(f"{self.base_url}/api/v2/list/{list_id}/task")
+
     @allure.step("Обновление task")
     def update_task(self, task_id, update_data):
         return self.session_2.put(f"{self.base_url}/api/v2/task/{task_id}", json=update_data)
