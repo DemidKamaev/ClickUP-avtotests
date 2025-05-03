@@ -10,3 +10,4 @@ allure-report
 # VS Code и прочий кэш
 __pycache__/
 *.py[cod]
+.venv
