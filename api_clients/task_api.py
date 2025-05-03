@@ -20,7 +20,7 @@ class ClickUpClient:
 
     @allure.step("Получение team id")
     def get_team_id(self):
-        response = self.session.get(f"{self.base_url}/api/v2/team")
+        response = self.session.get(f"{self.base_url}/v2/team")
         response_json = response.json()
 
         try:
@@ -33,7 +33,7 @@ class ClickUpClient:
     def get_space_id(self):
         team_id = self.get_team_id()
 
-        response = self.session.get(f"{self.base_url}/api/v2/team/{team_id}/space")
+        response = self.session.get(f"{self.base_url}/v2/team/{team_id}/space")
         response_json = response.json()
 
         try:
@@ -46,7 +46,7 @@ class ClickUpClient:
     def get_folder_id(self):
         space_id = self.get_space_id
 
-        response = self.session.get(f"{self.base_url}/api/v2/space/{space_id}/folder")
+        response = self.session.get(f"{self.base_url}/v2/space/{space_id}/folder")
         response_json = response.json()
 
         try:
@@ -59,7 +59,7 @@ class ClickUpClient:
     def get_list_id(self):
         folder_id = self.get_folder_id
 
-        response = self.session.get(f"{self.base_url}/api/v2/folder/{folder_id}/list")
+        response = self.session.get(f"{self.base_url}/v2/folder/{folder_id}/list")
         response_json = response.json()
 
         try:
@@ -70,20 +70,20 @@ class ClickUpClient:
 
     @allure.step("Создание task")
     def create_task(self, list_id, create_data):
-        return self.session_2.post(f"{self.base_url}/api/v2/list/{list_id}/task", json=create_data)
+        return self.session_2.post(f"{self.base_url}/v2/list/{list_id}/task", json=create_data)
 
     @allure.step("Получение task")
     def get_task(self, task_id):
-        return self.session.get(f"{self.base_url}/api/v2/task/{task_id}")
+        return self.session.get(f"{self.base_url}/v2/task/{task_id}")
 
     @allure.step("Получение списка задач")
     def get_full_tasks(self, list_id):
-        return self.session.get(f"{self.base_url}/api/v2/list/{list_id}/task")
+        return self.session.get(f"{self.base_url}/v2/list/{list_id}/task")
 
     @allure.step("Обновление task")
     def update_task(self, task_id, update_data):
-        return self.session_2.put(f"{self.base_url}/api/v2/task/{task_id}", json=update_data)
+        return self.session_2.put(f"{self.base_url}/v2/task/{task_id}", json=update_data)
 
     @allure.step("Удаление task")
     def delete_task(self, task_id):
-        return self.session.delete(f"{self.base_url}/api/v2/task/{task_id}")
+        return self.session.delete(f"{self.base_url}/v2/task/{task_id}")

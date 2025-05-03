@@ -1,0 +1,12 @@
+# created by virtualenv automatically
+# Секреты
+.env
+.idea
+
+# Allure
+allure-results
+allure-report
+
+# VS Code и прочий кэш
+__pycache__/
+*.py[cod]

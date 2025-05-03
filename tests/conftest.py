@@ -1,6 +1,5 @@
 import pytest
 import allure
-from config import BASE_URL
 from api_clients.task_api import ClickUpClient
 from utils.helpers import CLICKUP_API_KEY
 from faker import Faker
@@ -11,6 +10,7 @@ faker = Faker()
 
 @pytest.fixture(scope="session")
 def clickup_client():
+    from tests.constants import BASE_URL
     return ClickUpClient(
         base_url=BASE_URL,
         api_token=CLICKUP_API_KEY
@@ -73,30 +73,6 @@ def create_task_fixture(clickup_client, get_list_id_fixture, create_data):
     assert get_data['err'] == "Task not found, deleted", f"Value 'err': {get_data['err']}"
     assert 'ECODE' in get_data, "Key 'ECODE' not found in response"
     assert get_data['ECODE'] == "ITEM_013", f"Value 'ECODE': {get_data['ECODE']}"
-
-
-@pytest.fixture()
-def create_task_fixture_negative(clickup_client, get_list_id_fixture, request):
-    list_id = get_list_id_fixture
-    data = request.param
-    response = clickup_client.create_task(list_id, data)
-
-    if response is None:
-        raise ValueError("Ответ равен None, проверить API client")
-
-    yield response
-
-    if response.status_code == 200:
-        data_response = response.json()
-        task_id = data_response['id']
-        delete_response = clickup_client.delete_task(task_id)
-        assert delete_response.status_code == 204, (f"Status code: {delete_response.status_code}, "
-                                                    f"Response: {delete_response.text}")
-
-        get_response = clickup_client.get_task(task_id)
-        assert get_response.status_code == 404, (f"Status code: {get_response.status_code}, "
-                                                 f"Response: {get_response.text}")
-
 
 
 @pytest.fixture()

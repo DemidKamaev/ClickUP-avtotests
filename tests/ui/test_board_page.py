@@ -1,30 +1,30 @@
-from tests.ui.conftest import browser
+from tests.ui.conftest import sync_browser
 from pages.board_page import BoardPage
 import allure
-from utils.helpers import CLICKUP_EMAIL, CLICKUP_PASSWORD
 from api_clients.task_api import ClickUpClient
 from tests.conftest import clickup_client
+from tests.config import TEXT_CARD
 
 
 @allure.feature("UI: Задача на доске")
 class TestBoardTask(ClickUpClient):
     @allure.description("Проверка создания задачи через API и удаление через UI")
-    def test_delete_task_through_ui(self, browser, create_task_api_for_ui, authorized_user):
+    def test_delete_task_through_ui(self, sync_browser, create_task_fixture):
         with allure.step("Создание задачи через API"):
-            response = create_task_api_for_ui
+            response = create_task_fixture
             assert response.status_code == 200, "Задача не создана"
 
-        with allure.step("Переходим на вкладку доски"):
-            board_page = BoardPage(authorized_user)
+        with allure.step("Переходим на вкладку доски, используя открывшуюся страницу"):
+            board_page = BoardPage(sync_browser)
             board_page.go_to_board_tab()
 
         with allure.step("Удаляем задачу через UI"):
             board_page.delete_the_task()
 
     @allure.description("Проверка создания задачи через UI и удаления через API")
-    def test_ui_create_task(self, authorized_user, clickup_client, get_list_id_fixture):
-        with allure.step("Переходим на вкладку доски"):
-            board_page = BoardPage(authorized_user)
+    def test_ui_create_task(self, sync_browser, clickup_client, get_list_id_fixture):
+        with allure.step("Переходим на вкладку доски, используя открывшуюся страницу"):
+            board_page = BoardPage(sync_browser)
             board_page.go_to_board_tab()
 
         with allure.step("Создаем задачу через UI"):
@@ -36,14 +36,14 @@ class TestBoardTask(ClickUpClient):
                                                  f"ответ: {response.text}")
 
         with allure.step("Удаляем задачу через API"):
-            data_response = response.json()
-            task_id = data_response['tasks'][0]['id']
+            data_response = response.json().get('tasks', [])
+            task_to_delete = next((item for item in data_response if item['title'] == 'Test_card'), None)
+
+            if task_to_delete is None:
+                print(f"Карточка с названием {TEXT_CARD} не найдена")
+                return
+
+            task_id = task_to_delete['id']
             delete_response = clickup_client.delete_task(task_id)
             assert delete_response.status_code == 204, (f"Статус код: {delete_response.status_code}"
-                                                        f"ответ: {delete_response.text}")
-
-
-
-
-
-
+                                                        f"Ответ: {delete_response.text}")

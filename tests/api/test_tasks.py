@@ -2,6 +2,7 @@ import allure
 import pytest
 from api_clients.task_api import ClickUpClient
 from tests.conftest import create_data, update_data, clickup_client
+from tests.config import id_task
 
 
 @allure.feature("Тестирование  API в ClickUp")
@@ -101,14 +102,15 @@ class TestApi(ClickUpClient):
             assert data_put['status']['id'] == data_response['status']['id'], (f"Другое значение по ключу 'id': "
                                                                                f"{data_put['status']['id']}")
 
-    @pytest.mark.parametrize("create_task_fixture_negative, expected_status", [
+    @pytest.mark.parametrize("data_invalid, expected_status", [
         ({"name": 58484, "description": "Valid description", "status": "to do"}, 400),
         ({"name": True, "description": "Error for key", "status": "to do"}, 400),
         ({"name": "Valid name", "description": "Valid description", "status": "Open"}, 400)
-    ], indirect=["create_task_fixture_negative"])
-    def test_create_task_invalid_params(self, create_task_fixture_negative, expected_status):
+    ])
+    def test_create_task_invalid_params(self, data_invalid, expected_status, clickup_client, get_list_id_fixture):
         with allure.step(f"Проверка создания такси при невалидных данных"):
-            response = create_task_fixture_negative
+            list_id = get_list_id_fixture
+            response = clickup_client.create_task(list_id, data_invalid)
             assert response.status_code == expected_status, (
                 f"Ожидаемый код ответа: {expected_status}, "
                 f"Получен статус код: {response.status_code}, "
@@ -126,7 +128,7 @@ class TestApi(ClickUpClient):
 
         with allure.step("Проверям тело ответа на наличие ошибки"):
             if task_id in data_response:
-                get_response = clickup_client.get_task("86c39m3u")
+                get_response = clickup_client.get_task(id_task)
                 assert get_response.status_code == 401, (f"Status code: {get_response.status_code}, "
                                                          f"response: {get_response.text}")
                 get_data = get_response.json()
@@ -146,7 +148,7 @@ class TestApi(ClickUpClient):
 
         with allure.step("Проверка тела ответа на наличие ошибок"):
             if task_id in data_response:
-                put_response = clickup_client.update_task("86c39m3_id", update_data)
+                put_response = clickup_client.update_task(id_task, update_data)
                 assert put_response.status_code == 401, (f"Status code: {put_response.status_code}, "
                                                          f"Response: {put_response.text}")
                 assert "Oauth token not found" in put_response.text, "Нет сообщения в ответе"
@@ -181,7 +183,7 @@ class TestApi(ClickUpClient):
 
         with allure.step("Проверка текста об ошибки в теле ответа"):
             if task_id in data_response:
-                delete_response = clickup_client.delete_task("36wniw_id")
+                delete_response = clickup_client.delete_task(id_task)
                 assert delete_response.status_code == 401, (f"Status code: {delete_response.status_code}, "
                                                             f"Response: {delete_response.text}")
 
