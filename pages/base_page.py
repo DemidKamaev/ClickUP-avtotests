@@ -2,7 +2,7 @@ from playwright.sync_api import expect
 
 
 class BasePage:
-    __BASE_URL = 'https://api.clickup.com/api'
+    __BASE_URL = 'clickup.com'
 
     def __init__(self, page):
         self.page = page

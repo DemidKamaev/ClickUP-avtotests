@@ -1,1 +1,0 @@
-BASE_URL = 'https://api.clickup.com'

@@ -10,20 +10,20 @@ from tests.config import TEXT_CARD
 class TestBoardTask(ClickUpClient):
     @allure.description("Проверка создания задачи через API и удаление через UI")
     def test_delete_task_through_ui(self, sync_browser, create_task_fixture):
+        with allure.step("Вход и переход на вкладку доски, используя открывшуюся страницу"):
+            board_page = BoardPage(sync_browser)
+            board_page.go_to_board_tab()
+
         with allure.step("Создание задачи через API"):
             response = create_task_fixture
             assert response.status_code == 200, "Задача не создана"
-
-        with allure.step("Переходим на вкладку доски, используя открывшуюся страницу"):
-            board_page = BoardPage(sync_browser)
-            board_page.go_to_board_tab()
 
         with allure.step("Удаляем задачу через UI"):
             board_page.delete_the_task()
 
     @allure.description("Проверка создания задачи через UI и удаления через API")
     def test_ui_create_task(self, sync_browser, clickup_client, get_list_id_fixture):
-        with allure.step("Переходим на вкладку доски, используя открывшуюся страницу"):
+        with allure.step("Вход и переход на вкладку доски, используя открывшуюся страницу"):
             board_page = BoardPage(sync_browser)
             board_page.go_to_board_tab()
 

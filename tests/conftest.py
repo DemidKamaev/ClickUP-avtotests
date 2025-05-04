@@ -1,6 +1,7 @@
 import pytest
 import allure
 from api_clients.task_api import ClickUpClient
+from tests.config import BASE_URL
 from utils.helpers import CLICKUP_API_KEY
 from faker import Faker
 
@@ -10,7 +11,6 @@ faker = Faker()
 
 @pytest.fixture(scope="session")
 def clickup_client():
-    from tests.constants import BASE_URL
     return ClickUpClient(
         base_url=BASE_URL,
         api_token=CLICKUP_API_KEY

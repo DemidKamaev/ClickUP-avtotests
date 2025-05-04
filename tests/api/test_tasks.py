@@ -2,7 +2,7 @@ import allure
 import pytest
 from api_clients.task_api import ClickUpClient
 from tests.conftest import create_data, update_data, clickup_client
-from tests.config import id_task
+from tests.config import task_id_invalid
 
 
 @allure.feature("Тестирование  API в ClickUp")
@@ -128,7 +128,7 @@ class TestApi(ClickUpClient):
 
         with allure.step("Проверям тело ответа на наличие ошибки"):
             if task_id in data_response:
-                get_response = clickup_client.get_task(id_task)
+                get_response = clickup_client.get_task(task_id_invalid)
                 assert get_response.status_code == 401, (f"Status code: {get_response.status_code}, "
                                                          f"response: {get_response.text}")
                 get_data = get_response.json()
@@ -148,7 +148,7 @@ class TestApi(ClickUpClient):
 
         with allure.step("Проверка тела ответа на наличие ошибок"):
             if task_id in data_response:
-                put_response = clickup_client.update_task(id_task, update_data)
+                put_response = clickup_client.update_task(task_id_invalid, update_data)
                 assert put_response.status_code == 401, (f"Status code: {put_response.status_code}, "
                                                          f"Response: {put_response.text}")
                 assert "Oauth token not found" in put_response.text, "Нет сообщения в ответе"
@@ -183,7 +183,7 @@ class TestApi(ClickUpClient):
 
         with allure.step("Проверка текста об ошибки в теле ответа"):
             if task_id in data_response:
-                delete_response = clickup_client.delete_task(id_task)
+                delete_response = clickup_client.delete_task(task_id_invalid)
                 assert delete_response.status_code == 401, (f"Status code: {delete_response.status_code}, "
                                                             f"Response: {delete_response.text}")
 
